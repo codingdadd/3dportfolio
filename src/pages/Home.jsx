@@ -1,7 +1,7 @@
 import {useState , Suspense} from 'react';
 import { Canvas } from '@react-three/fiber';
 import Loader from '../components/loader';
-import  Island from '../models/island';
+import Island from '../models/island';
 import Sky from  '../models/Sky';
 import Plane from '../models/Plane';
 import Bird from '../models/Bird';
@@ -33,15 +33,15 @@ const [currentStage , setCurrentStage] = useState(1);   // this is to understand
       
   
       if(window.innerWidth < 768){
-        screenScale = [1.5,1.5,1.5];
-        screenPosition=[0,-1.5,0];
+        screenScale = [1.5, 1.5, 1.5];
+        screenPosition=[0, -1.5, 0];
       }
       else{
-        screenScale = [3,3,3];
-        screenPosition = [0,-4,4];
+        screenScale = [3, 3, 3];
+        screenPosition = [0, -4, 4];
         
       }
-      return [screenScale,screenPosition];
+      return [screenScale,screenPosition, ];
       }
       const [islandScale, islandPosition, islandRotation] = adjustIslandForScreenSize();
       const [planeScale , planePosition ] =  adjustPlaneForScreenSize();
@@ -73,7 +73,7 @@ const [currentStage , setCurrentStage] = useState(1);   // this is to understand
       isRotating={isRotating}
       planePosition={planePosition}
       planeScale={planeScale}
-      rotation={[0,10,0]}
+      rotation={[0,20,0]}
       />      
 
     </Suspense>

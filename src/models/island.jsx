@@ -25,16 +25,23 @@ const Island = ({isRotating , setIsRotating , setCurrentStage , ...props}) => {
  e.stopPropagation();  // this means the mouse will do what is in this fuction and will not touch anyother element
  e.preventDefault();
  setIsRotating(true);
-
  const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-
  lastX.current = clientX;
+
+ 
+
 
   }
   const handlePonterUp =(e) =>{
  e.stopPropagation();  
  e.preventDefault();
- setIsRotating(false);  // this will be false 
+ setIsRotating(false); 
+ const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+ lastX.current = clientX;
+ 
+ 
+ // this will be false 
+
 //  const clientX = e.touches ? e.touches[0].clientX : e.clientX;
 
 //  const delta = (clientX - lastX.current) / viewport.width;  // delta will be know as change. here clientX is staring point last.current is current point / viewport of the screen
@@ -49,9 +56,14 @@ const Island = ({isRotating , setIsRotating , setCurrentStage , ...props}) => {
   const handlePonterMove =(e) =>{
  e.stopPropagation();  
  e.preventDefault();
+ 
 
  if(isRotating){
-  const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+  const clientX = 
+  e.touches ?
+   e.touches[0].clientX : 
+   e.clientX;
+
   const delta = (clientX - lastX.current) / viewport.width;
   isLandRef.current.rotation.y += delta * 0.01* Math.PI;
   lastX.current = clientX ; // update the prepogation
@@ -63,12 +75,12 @@ const Island = ({isRotating , setIsRotating , setCurrentStage , ...props}) => {
   //for the keyboard event
 
   const handleKeyDown =(e) => {
-    if (e.key === 'ArrowLeft'){
-      if(isRotating) setIsRotating(true);
+    if (e.key ===  'ArrowLeft' ){
+      if(!isRotating) setIsRotating(true);
       isLandRef.current.rotation.y += 0.01 * Math.PI;
 
     } else if (e.key === 'ArrowRight'){
-      if(isRotating) setIsRotating(true);
+      if(!isRotating) setIsRotating(true);
       isLandRef.current.rotation.y -= 0.01 * Math.PI;
     }
   }
@@ -110,7 +122,7 @@ useFrame(() =>{
           setCurrentStage(1);
           break;
         default:
-          setCurrentStage(null);
+          setCurrentStage();
       }
   }
 }
@@ -123,17 +135,17 @@ useFrame(() =>{
   useEffect(()=>{
 
     const canvas = gl.domElement;   // because we are touching a dom of canvas
-    document.addEventListener('pointerdown', handlePonterDown);
-    document.addEventListener('pointerup', handlePonterUp);
-    document.addEventListener('pointermove', handlePonterMove);
+    canvas.addEventListener('pointerup', handlePonterUp);
+    canvas.addEventListener('pointerdown', handlePonterDown);
+    canvas.addEventListener('pointermove', handlePonterMove);
     document.addEventListener('Keydown', handleKeyDown);
     document.addEventListener('keyup', handleKeyUp);
     
 
     return() =>{
-      document.removeEventListener('pointerDown', handlePonterDown);
-      document.removeEventListener('pointerUp', handlePonterUp);
-      document.removeEventListener('pointerMove', handlePonterMove);
+      canvas.removeEventListener('pointerDown', handlePonterDown);
+      canvas.removeEventListener('pointerUp', handlePonterUp);
+      canvas.removeEventListener('pointerMove', handlePonterMove);
       document.removeEventListener('Keydown', handleKeyDown);
       document.removeEventListener('keyup', handleKeyUp);
     }

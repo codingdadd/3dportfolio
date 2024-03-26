@@ -5,7 +5,7 @@ import { useAnimations, useGLTF } from '@react-three/drei';
  //we use props as it is simple to pass into the mesh
 
 
-const Plane = (isRotating , ...props) => {
+const Plane = ({isRotating , ...props}) => {
   const ref =useRef();
     const {scene , animations} = useGLTF(planeScene);
     const {actions} = useAnimations(animations,ref);  // use the wording of the name properly like animations as it all from the react threejs
@@ -27,7 +27,7 @@ const Plane = (isRotating , ...props) => {
 
 
   return (
-    <mesh {  ...props} ref={ref}>    
+    <mesh {...props} ref={ref}>    
         <primitive object={scene}/>
     </mesh>
   )
