@@ -13,10 +13,18 @@ import {a} from'@react-spring/three';
 import isLandScene from '../assets/3d/island.glb';
 
 
-const Island = ({isRotating , setIsRotating , setCurrentStage , ...props}) => {
+const Island = ({
+  isRotating,
+  setIsRotating,
+  setCurrentStage,
+   ...props}) => {
+  
   const isLandRef = useRef()
+   // Get access to the Three.js renderer and viewport
   const { nodes, materials } = useGLTF(isLandScene);
+  //get nodes and materials form GLTF
   const {gl, viewport} = useThree();
+  // returns gl and viewport from three js
   const lastX = useRef(0);    //TO know the last position of the mouse 
   const rotationSpeed = useRef(0);  // to make rotation speed 0
   const dampingFactor = 0.95;   // this is usefull for how fast the model will move or response
@@ -25,20 +33,21 @@ const Island = ({isRotating , setIsRotating , setCurrentStage , ...props}) => {
  e.stopPropagation();  // this means the mouse will do what is in this fuction and will not touch anyother element
  e.preventDefault();
  setIsRotating(true);
+ // Calculate the clientX based on whether it's a touch event or a mouse event
  const clientX = e.touches ? e.touches[0].clientX : e.clientX;
- lastX.current = clientX;
 
- 
-
-
+  // Store the current clientX position for reference
+  lastX.current = clientX;
   }
-  const handlePonterUp =(e) =>{
+
+
+
+
+// Handle pointer (mouse or touch) up event
+ const handlePonterUp =(e) =>{
  e.stopPropagation();  
  e.preventDefault();
  setIsRotating(false); 
- const clientX = e.touches ? e.touches[0].clientX : e.clientX;
- lastX.current = clientX;
- 
  
  // this will be false 
 
@@ -53,7 +62,9 @@ const Island = ({isRotating , setIsRotating , setCurrentStage , ...props}) => {
 //  rotationSpeed.current = delta *0.01* math.PI;
 
 }
-  const handlePonterMove =(e) =>{
+
+
+ const handlePonterMove =(e) =>{
  e.stopPropagation();  
  e.preventDefault();
  
@@ -77,31 +88,62 @@ const Island = ({isRotating , setIsRotating , setCurrentStage , ...props}) => {
   const handleKeyDown =(e) => {
     if (e.key ===  'ArrowLeft' ){
       if(!isRotating) setIsRotating(true);
-      isLandRef.current.rotation.y += 0.01 * Math.PI;
+      
+      islandRef.current.rotation.y += 0.005 * Math.PI;
+      rotationSpeed.current = 0.007;
 
     } else if (e.key === 'ArrowRight'){
       if(!isRotating) setIsRotating(true);
-      isLandRef.current.rotation.y -= 0.01 * Math.PI;
+      islandRef.current.rotation.y -=  0.005 * Math.PI;
+      rotationSpeed.current = -0.007;
     }
-  }
+  };
 
   const handleKeyUp =(e) =>{
     if(e.key === 'ArrowLeft' || e.key === 'ArrowRight'){
       setIsRotating(false);
+      console.log('ArrowRight');
     }
-  }
+  };
+
+
+  //this will add the events and also will remove when we leave the page
+  useEffect(()=>{
+
+    const canvas = gl.domElement;   // because we are touching a dom of canvas
+    canvas.addEventListener('pointerup', handlePonterUp);
+    canvas.addEventListener('pointerdown', handlePonterDown);
+    canvas.addEventListener('pointermove', handlePonterMove);
+    window.addEventListener('Keydown', handleKeyDown);
+    window.addEventListener('keyup', handleKeyUp);
+    
+
+    return() =>{
+      
+      canvas.removeEventListener('pointerup', handlePonterUp);
+      canvas.removeEventListener('pointerdown', handlePonterDown);
+      canvas.removeEventListener('pointermove', handlePonterMove);
+      window.removeEventListener('Keydown', handleKeyDown);
+      window.removeEventListener('keyup', handleKeyUp);
+    };
+
+  },[gl , handlePonterDown, handlePonterMove, handlePonterUp]);
+
+
 
   // we will use a special hook use frame which will call back every single frame
 
 useFrame(() =>{
   if(!isRotating){
+    // apply daming factor
     rotationSpeed.current *= dampingFactor;
+    // stop is speed is very low 
   if(Math.abs(rotationSpeed.current) < 0.001){
-    rotationSpeed.current = 0;
+    rotationSpeed.current = 0;}
 
     isLandRef.current.rotation.y += rotationSpeed.current;
-  }
-  }else{
+  
+  } else{
     const rotation = isLandRef.current.rotation.y;
 
     const normalizedRotation =
@@ -122,35 +164,14 @@ useFrame(() =>{
           setCurrentStage(1);
           break;
         default:
-          setCurrentStage();
-      }
-  }
+          setCurrentStage(null);
+      };
+  };
 }
 
 )
 
 
-
-//this will add the events and also will remove when we leave the page
-  useEffect(()=>{
-
-    const canvas = gl.domElement;   // because we are touching a dom of canvas
-    canvas.addEventListener('pointerup', handlePonterUp);
-    canvas.addEventListener('pointerdown', handlePonterDown);
-    canvas.addEventListener('pointermove', handlePonterMove);
-    document.addEventListener('Keydown', handleKeyDown);
-    document.addEventListener('keyup', handleKeyUp);
-    
-
-    return() =>{
-      canvas.removeEventListener('pointerDown', handlePonterDown);
-      canvas.removeEventListener('pointerUp', handlePonterUp);
-      canvas.removeEventListener('pointerMove', handlePonterMove);
-      document.removeEventListener('Keydown', handleKeyDown);
-      document.removeEventListener('keyup', handleKeyUp);
-    }
-
-  },[gl , handlePonterDown, handlePonterMove, handlePonterUp,handleKeyDown,handleKeyUp])
 
 
   return (
