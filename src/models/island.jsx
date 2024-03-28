@@ -27,7 +27,8 @@ const Island = ({
   // returns gl and viewport from three js
   const lastX = useRef(0);    //TO know the last position of the mouse 
   const rotationSpeed = useRef(0);  // to make rotation speed 0
-  const dampingFactor = 0.95;   // this is usefull for how fast the model will move or response
+  const dampingFactor = 0.90
+;   // this is usefull for how fast the model will move or response
 
   const handlePonterDown =(e) =>{
  e.stopPropagation();  // this means the mouse will do what is in this fuction and will not touch anyother element
@@ -70,6 +71,7 @@ const Island = ({
  
 
  if(isRotating){
+  handleKeyUp(e);
   const clientX = 
   e.touches ?
    e.touches[0].clientX : 
@@ -89,12 +91,12 @@ const Island = ({
     if (e.key ===  'ArrowLeft' ){
       if(!isRotating) setIsRotating(true);
       
-      islandRef.current.rotation.y += 0.005 * Math.PI;
-      rotationSpeed.current = 0.007;
+      isLandRef.current.rotation.y += 0.01 * Math.PI;
+      // rotationSpeed.current = 0.007;
 
     } else if (e.key === 'ArrowRight'){
       if(!isRotating) setIsRotating(true);
-      islandRef.current.rotation.y -=  0.005 * Math.PI;
+      isLandRef.current.rotation.y -=  0.01 * Math.PI;
       rotationSpeed.current = -0.007;
     }
   };
@@ -114,8 +116,8 @@ const Island = ({
     canvas.addEventListener('pointerup', handlePonterUp);
     canvas.addEventListener('pointerdown', handlePonterDown);
     canvas.addEventListener('pointermove', handlePonterMove);
-    window.addEventListener('Keydown', handleKeyDown);
-    window.addEventListener('keyup', handleKeyUp);
+    document.addEventListener('Keydown', handleKeyDown);
+    document.addEventListener('keyup', handleKeyUp);
     
 
     return() =>{
@@ -123,15 +125,15 @@ const Island = ({
       canvas.removeEventListener('pointerup', handlePonterUp);
       canvas.removeEventListener('pointerdown', handlePonterDown);
       canvas.removeEventListener('pointermove', handlePonterMove);
-      window.removeEventListener('Keydown', handleKeyDown);
-      window.removeEventListener('keyup', handleKeyUp);
+      document.removeEventListener('Keydown', handleKeyDown);
+      document.removeEventListener('keyup', handleKeyUp);
     };
 
-  },[gl , handlePonterDown, handlePonterMove, handlePonterUp]);
+  },[gl , handlePonterDown, handlePonterMove, handlePonterUp , handleKeyUp ,handleKeyDown]);
 
 
 
-  // we will use a special hook use frame which will call back every single frame
+  // we will use a special hook use frame which will call back every single frame it is coming form react.3js fiber
 
 useFrame(() =>{
   if(!isRotating){

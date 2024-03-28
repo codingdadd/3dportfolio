@@ -61,8 +61,12 @@ const [currentStage , setCurrentStage] = useState(1);   // this is to understand
       {/* <spotLight/> */}
       <hemisphereLight skyColor="#b1e1ff" groundColor="#000000"
       intensity={1}/>
-      <Sky/>
-      <Bird/>
+      <Sky
+      isRotating={isRotating}
+      />
+      <Bird
+      isRotating={isRotating}
+      />
       
       <Island
       position={islandPosition}
