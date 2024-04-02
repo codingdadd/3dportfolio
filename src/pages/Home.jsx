@@ -5,10 +5,12 @@ import Island from '../models/island';
 import Sky from  '../models/Sky';
 import Plane from '../models/Plane';
 import Bird from '../models/Bird';
+import HomeInfo from '../components/HomeInfo';
 
 const home = () => {
 const [isRotating, setIsRotating] = useState(false);
 const [currentStage , setCurrentStage] = useState(1);   // this is to understand on which stage we are
+
 
 
   const adjustIslandForScreenSize =() => {
@@ -48,6 +50,11 @@ const [currentStage , setCurrentStage] = useState(1);   // this is to understand
 
   return (
    <section className='w-full h-screen relative'>
+   <div className='absolute top-28 left-0 right-0 z-10 flex items-center justify-center'> 
+   {currentStage && <HomeInfo currentStage={currentStage}/>}
+   
+   </div>
+   
    <Canvas 
     className={`w-full h-screen bg-transparent ${
       isRotating ? "cursor-grabbing" : "cursor-grab"
